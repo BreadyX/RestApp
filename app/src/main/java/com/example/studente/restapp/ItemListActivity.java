@@ -1,5 +1,6 @@
 package com.example.studente.restapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ public class ItemListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mIsTablet;
+    private PostRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +62,13 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new PostRecyclerViewAdapter(this, PostContent.ITEMS, mIsTablet));
+        mAdapter = new PostRecyclerViewAdapter(this, PostContent.ITEMS, mIsTablet);
+        recyclerView.setAdapter(mAdapter);
     }
 
-
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        mAdapter.notifyDataSetChanged();
+    }
 }
