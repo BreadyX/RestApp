@@ -1,8 +1,11 @@
 package com.example.studente.restapp.dummy;
 
+import com.example.studente.restapp.Database.PostDao;
+import com.example.studente.restapp.Database.PostDatabase;
 import com.example.studente.restapp.Post;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,29 +18,43 @@ import java.util.Map;
  */
 public class PostContent {
 
-    /**
-     * An array of sample (dummy) items.
-     */
     public static final List<Post> ITEMS = new ArrayList<Post>();
+
+    protected  PostDatabase db;
 
     private static final int COUNT = 25;
 
-    static {//codice di inizializzazione viene eseguito prima del costruttore
-        // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createPost(i));
+    public void loadDummyPostInDatabase(){
+        PostDao dao = db.postDao();
+        List<Post> postList = dao.getAll();
+        if (postList == null || postList.size() == 0){
+            postList = addItemToDatabase();
         }
+            PostContent.ITEMS.addAll(postList);
     }
 
-    private static void addItem(Post item) {
+    private List<Post> addItemToDatabase() {
+        PostDao dao = db.postDao();
+        Post[] postArray = new Post[COUNT];
+        for (int i = 1; i <= COUNT; i++) {
+            Post post = createPost(i);
+            postArray[i] = post;
+        }
+        dao.insertAll(postArray);
+        return Arrays.asList(postArray);
+    }
+
+    public PostContent(){}
+
+    private void addItem(Post item) {
         ITEMS.add(item);
     }
 
-    private static Post createPost(int position) {
+    private Post createPost(int position) {
         return new Post(0, position, "Title " + position, "Body " + position, false);
     }
 
-    private static String makeDetails(int position) {
+    private String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
         builder.append("Details about Item: ").append(position);
         for (int i = 0; i < position; i++) {

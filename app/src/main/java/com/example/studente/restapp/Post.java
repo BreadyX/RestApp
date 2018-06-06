@@ -1,20 +1,29 @@
 package com.example.studente.restapp;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by Studente on 31/05/2018.
- */
+@Entity()
 public class Post implements Parcelable {
 
-    private int userId;
+    @PrimaryKey
     private int postId;
+    @ColumnInfo(name = "user_id")
+    private int userId;
+    @ColumnInfo(name = "title")
     private String title;
+    @ColumnInfo(name = "body")
     private String body;
+    @ColumnInfo(name = "favourite")
     private boolean favourite;
+    @ColumnInfo(name = "image_uri")
     private Uri imageUri;
+
+    public Post(){}
 
     public Post(int userId, int postId, String title, String body, boolean favourite, Uri imageUri) {
         this.userId = userId;
@@ -36,9 +45,8 @@ public class Post implements Parcelable {
         body = in.readString();
         favourite = in.readInt() == 0 ? false : true;
         String uriString = in.readString();
-        if (uriString != null) {
+        if (uriString != null)
             imageUri = Uri.parse(uriString);
-        }
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {

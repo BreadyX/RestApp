@@ -9,7 +9,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="com.sinervis.rest.ItemListActivity">
+    tools:context="com.example.studente.restapp.ItemListActivity">
 
     <!--
     This layout is a two-pane layout for the Items

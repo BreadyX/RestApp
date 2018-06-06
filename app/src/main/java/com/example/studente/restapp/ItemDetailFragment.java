@@ -34,7 +34,6 @@ public class ItemDetailFragment extends Fragment {
      * The dummy content this fragment is presenting.
      */
     private Post mItem;
-
     private TextView mTextBody;
     private ImageView mImageView;
     /**
