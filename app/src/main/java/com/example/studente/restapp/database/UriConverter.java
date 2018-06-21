@@ -1,4 +1,4 @@
-package com.example.studente.restapp.Database;
+package com.example.studente.restapp.database;
 
 import android.arch.persistence.room.TypeConverter;
 import android.net.Uri;

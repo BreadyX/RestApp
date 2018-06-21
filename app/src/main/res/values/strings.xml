@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Rest</string>
     <string name="title_item_detail">Item Detail</string>
+    <string name="post_downloaded">New post has been downloaded</string>
 </resources>

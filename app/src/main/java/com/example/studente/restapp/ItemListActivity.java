@@ -1,11 +1,14 @@
 package com.example.studente.restapp;
 
 import android.arch.persistence.room.Room;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,12 +17,12 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 
 
-import com.example.studente.restapp.Database.PostDao;
-import com.example.studente.restapp.Database.PostDatabase;
+import com.example.studente.restapp.database.PostDao;
+import com.example.studente.restapp.database.PostDatabase;
 import com.example.studente.restapp.adapter.PostRecyclerViewAdapter;
+import com.example.studente.restapp.service.PostService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,9 +39,17 @@ public class ItemListActivity extends AppCompatActivity {
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
+    public static final String TAG = ItemListActivity.class.getName();
     private boolean mIsTablet;
     private PostRecyclerViewAdapter mAdapter;
     public  final List<Post> ITEMS = new ArrayList<Post>();
+    private BroadcastReceiver mReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent){
+            mAdapter.notifyDataSetChanged();
+        }
+    };
+    public static final String ACTION_DATA_SET_CHANGED = "com.example.studente.restapp.POST_SET_CHANGED";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +81,23 @@ public class ItemListActivity extends AppCompatActivity {
         setupRecyclerView((RecyclerView) recyclerView);
 
         loadPostFromDatabase();
+
+        Intent downloadPostIntent = new Intent(this, PostService.class);
+        startService(downloadPostIntent);
+    }
+
+    @Override
+    protected void onStop() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_DATA_SET_CHANGED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, filter);
+        super.onStart();
     }
 
     public void loadPostFromDatabase() {
@@ -105,45 +133,5 @@ public class ItemListActivity extends AppCompatActivity {
 
             return null;
         }
-    }
-
-    private class DummyPostContent {
-
-        private final int COUNT = 25;
-        private PostDatabase db;
-
-        public DummyPostContent() {
-            this.db = Room.databaseBuilder(ItemListActivity.this, PostDatabase.class, PostDatabase.DATABASE_NAME).build();
-        }
-
-        private List<Post> addItemsToDatabase() {
-            PostDao dao = db.postDao();
-            Post[] postArray = new Post[COUNT];
-            for (int i=0; i<COUNT; i++) {
-                Post post = createPost(i);
-                postArray[i] = post;
-            }
-            dao.insertAll(postArray);
-            return Arrays.asList(postArray);
-        }
-
-        private void addItem(Post item) {
-            ITEMS.add(item);
-        }
-
-        private Post createPost(int position) {
-            return new Post(0, position, "Title " + position, "Body " + position, false);
-        }
-
-        private String makeDetails(int position) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Details about Item: ").append(position);
-            for (int i = 0; i < position; i++) {
-                builder.append("\nMore details information here.");
-            }
-            return builder.toString();
-        }
-
-
     }
 }

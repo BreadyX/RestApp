@@ -65,7 +65,7 @@ public class PostRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Post item  = mValues.get(position);
-        holder.mIdView.setText(Integer.toString(item.getPostId()));
+        holder.mIdView.setText(Integer.toString(item.getId()));
         holder.mContentView.setText(item.getTitle());
         showFavouriteIcon(item, holder.mFavImage);
 

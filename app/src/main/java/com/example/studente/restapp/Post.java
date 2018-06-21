@@ -11,7 +11,7 @@ import android.os.Parcelable;
 public class Post implements Parcelable {
 
     @PrimaryKey
-    private int postId;
+    private int id;
     @ColumnInfo(name = "user_id")
     private int userId;
     @ColumnInfo(name = "title")
@@ -25,22 +25,22 @@ public class Post implements Parcelable {
 
     public Post(){}
 
-    public Post(int userId, int postId, String title, String body, boolean favourite, Uri imageUri) {
+    public Post(int userId, int id, String title, String body, boolean favourite, Uri imageUri) {
         this.userId = userId;
-        this.postId = postId;
+        this.id = id;
         this.title = title;
         this.body = body;
         this.favourite = favourite;
         this.imageUri = imageUri;
     }
 
-    public Post(int userId, int postId, String title, String body, boolean favourite) {
-        this(userId, postId, title, body, favourite, null);
+    public Post(int userId, int id, String title, String body, boolean favourite) {
+        this(userId, id, title, body, favourite, null);
     }
 
     protected Post(Parcel in) {
         userId = in.readInt();
-        postId = in.readInt();
+        id = in.readInt();
         title = in.readString();
         body = in.readString();
         favourite = in.readInt() == 0 ? false : true;
@@ -69,12 +69,12 @@ public class Post implements Parcelable {
         this.userId = userId;
     }
 
-    public int getPostId() {
-        return postId;
+    public int getId() {
+        return id;
     }
 
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -117,7 +117,7 @@ public class Post implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(userId);
-        dest.writeInt(postId);
+        dest.writeInt(id);
         dest.writeString(title);
         dest.writeString(body);
         dest.writeInt(favourite ? 1:0);

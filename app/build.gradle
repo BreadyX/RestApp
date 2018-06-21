@@ -34,6 +34,9 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$room_version"
     annotationProcessor "android.arch.persistence.room:compiler:$room_version"
 
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
     /*
     implementation 'org.projectlombok:lombok:1.16.22'
     annotationProcessor 'org.projectlombok:lombok:1.16.22'
