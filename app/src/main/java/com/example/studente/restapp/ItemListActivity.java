@@ -38,6 +38,7 @@ public class ItemListActivity extends AppCompatActivity {
      */
     private boolean mIsTablet;
     private PostRecyclerViewAdapter mAdapter;
+    public  final List<Post> ITEMS = new ArrayList<Post>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +66,15 @@ public class ItemListActivity extends AppCompatActivity {
             mIsTablet = true;
         }
 
-        DummyPostContent dummyContent = new DummyPostContent();
-        dummyContent.loadDummyPostIntoDatabase();
-
         View recyclerView = findViewById(R.id.item_list);
         setupRecyclerView((RecyclerView) recyclerView);
+
+        loadPostFromDatabase();
+    }
+
+    public void loadPostFromDatabase() {
+        ReadDatabase loadDatabase = new ReadDatabase(this);
+        loadDatabase.execute();
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -83,7 +88,24 @@ public class ItemListActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    public  final List<Post> ITEMS = new ArrayList<Post>();
+    private class ReadDatabase extends AsyncTask<Void, Void, Void> {
+
+        private PostDatabase db;
+        ReadDatabase(Context context) {
+            this.db = Room.databaseBuilder(context, PostDatabase.class, PostDatabase.DATABASE_NAME).build();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            PostDao dao = db.postDao();
+            List<Post> postList = dao.getAll();
+
+            ITEMS.addAll(postList);
+            mAdapter.notifyDataSetChanged();
+
+            return null;
+        }
+    }
 
     private class DummyPostContent {
 
@@ -92,11 +114,6 @@ public class ItemListActivity extends AppCompatActivity {
 
         public DummyPostContent() {
             this.db = Room.databaseBuilder(ItemListActivity.this, PostDatabase.class, PostDatabase.DATABASE_NAME).build();
-        }
-
-        public void loadDummyPostIntoDatabase() {
-            LoadDatabase loadDatabase = new LoadDatabase();
-            loadDatabase.execute();
         }
 
         private List<Post> addItemsToDatabase() {
@@ -127,23 +144,6 @@ public class ItemListActivity extends AppCompatActivity {
             return builder.toString();
         }
 
-        private class LoadDatabase extends AsyncTask<Void, Void, Void> {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                PostDao dao = db.postDao();
-                List<Post> postList = dao.getAll();
-
-                if (postList == null || postList.size() == 0) {
-                    postList = addItemsToDatabase();
-                }
-
-                ITEMS.addAll(postList);
-                mAdapter.notifyDataSetChanged();
-
-                return null;
-            }
-        }
 
     }
 }
