@@ -46,7 +46,7 @@ public class ItemListActivity extends AppCompatActivity {
     private BroadcastReceiver mReceiver = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent){
-            mAdapter.notifyDataSetChanged();
+            loadPostFromDatabase();
         }
     };
     public static final String ACTION_DATA_SET_CHANGED = "com.example.studente.restapp.POST_SET_CHANGED";
@@ -116,7 +116,12 @@ public class ItemListActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    private class ReadDatabase extends AsyncTask<Void, Void, Void> {
+    private void notifyDataSetChanged(List<Post> items){
+        ITEMS.addAll(items);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private class ReadDatabase extends AsyncTask<Void, Void, List<Post>> {
 
         private PostDatabase db;
         ReadDatabase(Context context) {
@@ -124,14 +129,14 @@ public class ItemListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected List<Post> doInBackground(Void... voids) {
             PostDao dao = db.postDao();
             List<Post> postList = dao.getAll();
-
-            ITEMS.addAll(postList);
-            mAdapter.notifyDataSetChanged();
-
-            return null;
+            return postList;
+        }
+        @Override
+        public void onPostExecute(List<Post> postList){
+            notifyDataSetChanged(postList);
         }
     }
 }

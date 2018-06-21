@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.studente.restapp.ItemListActivity;
@@ -111,7 +112,8 @@ public class PostService extends Service {
                 Intent broadcastReceiverIntent = new Intent(
                         ItemListActivity.ACTION_DATA_SET_CHANGED);
                 Log.i(TAG, "Launching broadcast");
-                sendBroadcast(broadcastReceiverIntent);
+                LocalBroadcastManager.getInstance(PostService.this).
+                        sendBroadcast(broadcastReceiverIntent);
                 showNotification();
             }
             stopSelf();
